@@ -11,6 +11,8 @@ const createToken = (identity) => {
         serviceSid: process.env.CONVERSATIONS_SERVICE_SID
     });
 
+    console.log("identity", identity);
+
     const token = new AccessToken(process.env.ACCOUNT_SID, process.env.API_KEY, process.env.API_SECRET, {
         identity,
         ttl: TOKEN_TTL_IN_SECONDS

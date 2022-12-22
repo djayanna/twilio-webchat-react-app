@@ -44,6 +44,7 @@ export type ConfigState = {
     };
     fileAttachment?: FileAttachmentConfig;
     transcript?: TranscriptConfig;
+    preEngagementData?: PreEngagementData;
 };
 
 export type Notification = {

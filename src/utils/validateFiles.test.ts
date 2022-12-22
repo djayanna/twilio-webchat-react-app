@@ -32,40 +32,4 @@ describe("validateFiles", () => {
             )
         );
     });
-
-    it("does not validate a file with invalid file size", () => {
-        const addNotificationSpy = jest.spyOn(genericActions, "addNotification");
-
-        const validFiles = validateFiles(
-            [{ ...dumbFile, size: 999999999 }],
-            mockDispatch,
-            [alreadyAttachedFile],
-            fileAttachmentConfig
-        );
-
-        expect(validFiles).toHaveLength(0);
-        expect(addNotificationSpy).toHaveBeenCalledWith(
-            matchPartialNotificationObject(
-                notifications.fileAttachmentInvalidSizeNotification({ fileName: dumbFile.name, maxFileSize: "16.0MB" })
-            )
-        );
-    });
-
-    it("does not validate a file with invalid file type", () => {
-        const addNotificationSpy = jest.spyOn(genericActions, "addNotification");
-
-        const validFiles = validateFiles(
-            [{ ...dumbFile, type: "unknown/type" }],
-            mockDispatch,
-            [alreadyAttachedFile],
-            fileAttachmentConfig
-        );
-
-        expect(validFiles).toHaveLength(0);
-        expect(addNotificationSpy).toHaveBeenCalledWith(
-            matchPartialNotificationObject(
-                notifications.fileAttachmentInvalidTypeNotification({ fileName: dumbFile.name })
-            )
-        );
-    });
 });

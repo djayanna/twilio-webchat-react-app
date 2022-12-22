@@ -1,11 +1,13 @@
-import { Input } from "@twilio-paste/core/input";
-import { Label } from "@twilio-paste/core/label";
 import { Box } from "@twilio-paste/core/box";
 import { TextArea } from "@twilio-paste/core/textarea";
-import { FormEvent } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { Button } from "@twilio-paste/core/button";
 import { useDispatch, useSelector } from "react-redux";
 import { Text } from "@twilio-paste/core/text";
+import { InputBox } from "@twilio-paste/core/input-box";
+import { SendIcon } from "@twilio-paste/icons/esm/SendIcon";
+import { ChatIcon } from "@twilio-paste/icons/esm/ChatIcon";
+import { Flex } from "@twilio-paste/core";
 
 import { sessionDataHandler } from "../sessionDataHandler";
 import { addNotification, changeEngagementPhase, updatePreEngagementData } from "../store/actions/genericActions";
@@ -14,28 +16,41 @@ import { AppState, EngagementPhase } from "../store/definitions";
 import { Header } from "./Header";
 import { notifications } from "../notifications";
 import { NotificationBar } from "./NotificationBar";
-import { introStyles, fieldStyles, titleStyles, formStyles } from "./styles/PreEngagementFormPhase.styles";
+import { introStyles, titleStyles, formStyles, optionStyles } from "./styles/PreEngagementFormPhase.styles";
+import { innerInputStyles, messageOptionContainerStyles, textAreaContainerStyles } from "./styles/MessageInput.styles";
+import { CHAR_LIMIT } from "../constants";
 
 export const PreEngagementFormPhase = () => {
-    const { name, email, query } = useSelector((state: AppState) => state.session.preEngagementData) || {};
+    const { name, email } = useSelector((state: AppState) => state.config.preEngagementData) || {};
+    const [text, setText] = useState("");
+    // const [isSending, setIsSending] = useState(false);
     const dispatch = useDispatch();
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    async function initiateChatSessionAndSendMessage(message: string) {
+        dispatch(updatePreEngagementData({ query: message }));
         dispatch(changeEngagementPhase({ phase: EngagementPhase.Loading }));
         try {
             const data = await sessionDataHandler.fetchAndStoreNewSession({
                 formData: {
                     friendlyName: name,
                     email,
-                    query
+                    query: message
                 }
             });
+
             dispatch(initSession({ token: data.token, conversationSid: data.conversationSid }));
         } catch (err) {
             dispatch(addNotification(notifications.failedToInitSessionNotification((err as Error).message)));
             dispatch(changeEngagementPhase({ phase: EngagementPhase.PreEngagementForm }));
         }
+    }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+
+        await initiateChatSessionAndSendMessage(text);
+        setText("");
     };
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -45,58 +60,99 @@ export const PreEngagementFormPhase = () => {
         }
     };
 
+    const handleClick = async (message: string) => {
+        await initiateChatSessionAndSendMessage(message);
+    };
+
+    const onChange = (val: ChangeEvent<HTMLTextAreaElement>) => {
+        setText(val.target.value);
+    };
+
     return (
         <>
             <Header />
             <NotificationBar />
             <Box as="form" data-test="pre-engagement-chat-form" onSubmit={handleSubmit} {...formStyles}>
-                <Text {...titleStyles} as="h3">
-                    Hi there!
-                </Text>
+                <Flex hAlignContent="center" width="100%">
+                    <ChatIcon decorative={false} title="chat" size="sizeIcon60" color="colorTextIconOffline" />
+                </Flex>
+                <Flex hAlignContent="center" width="100%">
+                    <Text {...titleStyles} textAlign="center" as="p">
+                        Welcome to Owl Shoes!
+                    </Text>
+                </Flex>
                 <Text {...introStyles} as="p">
-                    We&#39;re here to help. Please give us some info to get started.
+                    Hi there! What can I help you with today?
                 </Text>
-                <Box {...fieldStyles}>
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                        type="text"
-                        placeholder="Please enter your name"
-                        name="name"
-                        data-test="pre-engagement-chat-form-name-input"
-                        value={name}
-                        onChange={(e) => dispatch(updatePreEngagementData({ name: e.target.value }))}
-                        required
-                    />
+                <p />
+                <Box marginLeft="space100" height="80" {...optionStyles}>
+                    <Button
+                        data-test="pre-engagement-chat-order-tracking-button"
+                        variant="primary_icon"
+                        size="icon_small"
+                        onClick={async () => {
+                            handleClick("Order Tracking");
+                        }}
+                    >
+                        Order Tracking
+                    </Button>
                 </Box>
-                <Box {...fieldStyles}>
-                    <Label htmlFor="email">Email address</Label>
-                    <Input
-                        type="email"
-                        placeholder="Please enter your email address"
-                        name="email"
-                        data-test="pre-engagement-chat-form-email-input"
-                        value={email}
-                        onChange={(e) => dispatch(updatePreEngagementData({ email: e.target.value }))}
-                        required
-                    />
+                <p />
+                <Box marginLeft="space100" height="80" {...optionStyles}>
+                    <Button
+                        variant="primary_icon"
+                        data-test="pre-engagement-chat-returns-button"
+                        size="icon_small"
+                        onClick={async () => {
+                            handleClick("Returns");
+                        }}
+                    >
+                        Returns
+                    </Button>
                 </Box>
-
-                <Box {...fieldStyles}>
-                    <Label htmlFor="query">How can we help you?</Label>
-                    <TextArea
-                        placeholder="Ask a question"
-                        name="query"
-                        data-test="pre-engagement-chat-form-query-textarea"
-                        value={query}
-                        onChange={(e) => dispatch(updatePreEngagementData({ query: e.target.value }))}
-                        onKeyPress={handleKeyPress}
-                        required
-                    />
+                <p />
+                <Box marginLeft="space100" height="80" {...optionStyles}>
+                    <Button
+                        data-test="pre-engagement-sizing-advice-button"
+                        variant="primary_icon"
+                        size="icon"
+                        onClick={async () => {
+                            handleClick("Sizing advice");
+                        }}
+                    >
+                        Sizing advice
+                    </Button>
                 </Box>
-
-                <Button variant="primary" type="submit" data-test="pre-engagement-start-chat-button">
-                    Start chat
-                </Button>
+                <Box as="div" height="220px" />
+                <Flex vAlignContent="bottom">
+                    <InputBox element="MESSAGE_INPUT_BOX">
+                        <Box as="div" {...innerInputStyles}>
+                            <Box {...textAreaContainerStyles}>
+                                <TextArea
+                                    ref={textAreaRef}
+                                    data-test="message-input-textarea"
+                                    placeholder="Type your message"
+                                    value={text}
+                                    element="MESSAGE_INPUT"
+                                    onChange={onChange}
+                                    onKeyPress={handleKeyPress}
+                                    maxLength={CHAR_LIMIT}
+                                />
+                            </Box>
+                            <Box {...messageOptionContainerStyles}>
+                                <Button
+                                    data-test="message-send-button"
+                                    variant="primary_icon"
+                                    size="icon_small"
+                                    type="submit"
+                                    // aria-disabled={isSubmitDisabled}
+                                >
+                                    <SendIcon decorative={false} title="Send message" size="sizeIcon30" />
+                                </Button>
+                            </Box>
+                        </Box>
+                    </InputBox>
+                </Flex>
             </Box>
         </>
     );

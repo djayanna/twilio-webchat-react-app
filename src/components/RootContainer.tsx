@@ -16,7 +16,8 @@ const getPhaseComponent = (phase: EngagementPhase) => {
             return <MessagingCanvasPhase />;
         case EngagementPhase.PreEngagementForm:
         default:
-            return <PreEngagementFormPhase />;
+            // return <MessagingCanvasPhase />;
+             return <PreEngagementFormPhase />;
     }
 };
 

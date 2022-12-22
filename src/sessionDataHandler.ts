@@ -102,7 +102,7 @@ export const sessionDataHandler = {
     },
 
     fetchAndStoreNewSession: async ({ formData }: { formData: Record<string, unknown> }) => {
-        log.debug("sessionDataHandler: trying to create new session");
+        log.debug("sessionDataHandler: trying to create new session", formData);
 
         let newTokenData;
 
@@ -112,7 +112,7 @@ export const sessionDataHandler = {
             throw Error("No results from server");
         }
 
-        log.debug("sessionDataHandler: new session successfully created");
+        log.debug("sessionDataHandler: new session successfully created", newTokenData);
         storeSessionData(newTokenData);
 
         return newTokenData;
@@ -120,5 +120,17 @@ export const sessionDataHandler = {
 
     clear: () => {
         localStorage.removeItem(LOCAL_STORAGE_ITEM_ID);
+    },
+
+    endSession: async (conversationSid: string) => {
+        log.debug("sessionDataHandler: trying to end the session", conversationSid);
+
+        try {
+            await contactBackend<Token>("/endChat", { conversationSid });
+        } catch (e) {
+            throw Error("No results from server");
+        }
+
+        log.debug("sessionDataHandler: ended session successfully", conversationSid);
     }
 };

@@ -62,3 +62,15 @@ export const readStatusStyles: TextStyleProps = {
     marginRight: "space20",
     color: "colorText"
 };
+
+export const productNameStyles: TextStyleProps = {
+    fontSize: "fontSize30"
+};
+
+export const productPriceStyles: TextStyleProps = {
+    fontSize: "fontSize30"
+};
+
+export const optionStyles : BoxStyleProps = {
+    backgroundColor: "colorBackgroundPrimaryWeakest"
+};

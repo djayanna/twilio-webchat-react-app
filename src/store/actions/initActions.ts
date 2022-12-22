@@ -32,6 +32,7 @@ export function initSession({ token, conversationSid }: { token: string; convers
             try {
                 conversation = await conversationsClient.getConversationBySid(conversationSid);
             } catch (e) {
+                console.error(e, conversationSid,  token);
                 dispatch(addNotification(notifications.failedToInitSessionNotification("Couldn't load conversation")));
                 dispatch(changeEngagementPhase({ phase: EngagementPhase.PreEngagementForm }));
                 return;

@@ -164,11 +164,11 @@ export const MessageList = () => {
         hasLoadedAllMessages ? (
             <>
                 <Box {...conversationEventContainerStyles}>
-                    <Text as="h3" {...conversationEventTitleStyles} data-test="chat-started">
-                        Chat started
+                    <Text as="p" {...conversationEventTitleStyles} data-test="chat-started">
+                        Welcome to Owl Shoes!
                     </Text>
                     <Text as="p" {...conversationEventDateStyles}>
-                        {conversation?.dateCreated.toLocaleString()}
+                        {conversation?.dateCreated.getDate() === new Date().getDate()?"Today": conversation?.dateCreated.toLocaleString()}
                     </Text>
                 </Box>
             </>

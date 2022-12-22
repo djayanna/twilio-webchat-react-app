@@ -15,6 +15,7 @@ export function WebchatWidget() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        console.log("loading chat");
         const data = sessionDataHandler.tryResumeExistingSession();
         if (data) {
             try {

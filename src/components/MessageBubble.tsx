@@ -7,6 +7,7 @@ import { Flex } from "@twilio-paste/core/flex";
 import { UserIcon } from "@twilio-paste/icons/esm/UserIcon";
 import { Key, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { SuccessIcon } from "@twilio-paste/icons/esm/SuccessIcon";
+import { Button } from "@twilio-paste/core";
 
 import { AppState } from "../store/definitions";
 import { FilePreview } from "./FilePreview";
@@ -19,8 +20,27 @@ import {
     bodyStyles,
     outerContainerStyles,
     readStatusStyles,
-    bubbleAndAvatarContainerStyles
+    bubbleAndAvatarContainerStyles,
+    productNameStyles,
+    productPriceStyles,
+    optionStyles
 } from "./styles/MessageBubble.styles";
+
+interface MessageWithAttributes {
+    type: string;
+}
+
+interface ProductCardAttributes extends MessageWithAttributes {
+    type: string;
+    name: string;
+    imageUrl: string;
+    price: string;
+    productUrl: string;
+}
+
+interface SelectableOptionsAttributes extends MessageWithAttributes {
+    options: string[];
+}
 
 const doubleDigit = (number: number) => `${number < 10 ? 0 : ""}${number}`;
 
@@ -39,12 +59,15 @@ export const MessageBubble = ({
 }) => {
     const [read, setRead] = useState(false);
     const [isMouseDown, setIsMouseDown] = useState(false);
-    const { conversationsClient, participants, users, fileAttachmentConfig } = useSelector((state: AppState) => ({
-        conversationsClient: state.chat.conversationsClient,
-        participants: state.chat.participants,
-        users: state.chat.users,
-        fileAttachmentConfig: state.config.fileAttachment
-    }));
+    const { conversation, conversationsClient, participants, users, fileAttachmentConfig } = useSelector(
+        (state: AppState) => ({
+            conversation: state.chat.conversation,
+            conversationsClient: state.chat.conversationsClient,
+            participants: state.chat.participants,
+            users: state.chat.users,
+            fileAttachmentConfig: state.config.fileAttachment
+        })
+    );
     const messageRef = useRef<HTMLDivElement>(null);
 
     const belongsToCurrentUser = message.author === conversationsClient?.user.identity;
@@ -86,6 +109,59 @@ export const MessageBubble = ({
         return <i>Media messages are not supported</i>;
     };
 
+    const renderSelectableOptions = () => {
+        const attributes = message.attributes as SelectableOptionsAttributes;
+        if (!attributes?.options) {
+            return null;
+        }
+
+        return attributes?.options.map((option: string, index: Key) => {
+            return (
+                <Box key={index}>
+                    <p />
+                    <Box key={index} marginLeft="space100" height="70" {...optionStyles}>
+                        <Button
+                            key={index}
+                            data-test="message-send-button"
+                            variant="primary_icon"
+                            size="icon_small"
+                            onClick={async () => {
+                                let preparedMessage = conversation?.prepareMessage();
+                                preparedMessage = preparedMessage?.setBody(option);
+                                await preparedMessage?.build().send();
+                            }}
+                        >
+                            {option}
+                        </Button>
+                    </Box>
+                </Box>
+            );
+        });
+    };
+
+    const renderProductCard = () => {
+        const attributes = message.attributes as ProductCardAttributes;
+
+        return (
+            <Box
+                alignContent="center"
+                onClick={() => {
+                    window.location.href = attributes?.productUrl;
+                }}
+            >
+                {/* <Anchor href={attributes?.productUrl}> */}
+                <img src={attributes?.imageUrl} alt="" width={164} height={164} />
+                <Text as="p" {...productNameStyles}>
+                    {attributes?.name}
+                </Text>
+                <Text as="p" {...productPriceStyles}>
+                    {attributes?.price}
+                </Text>
+                {/* </Anchor> */}
+            </Box>
+        );
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
             const newFocusValue = message.index + (e.key === "ArrowUp" ? -1 : 1);
@@ -111,6 +187,7 @@ export const MessageBubble = ({
 
     const author = users?.find((u) => u.identity === message.author)?.friendlyName || message.author;
 
+    const mAttributes = message.attributes as MessageWithAttributes;
     return (
         <Box
             {...outerContainerStyles}
@@ -148,9 +225,11 @@ export const MessageBubble = ({
                     <Text as="p" {...bodyStyles}>
                         {message.body ? parseMessageBody(message.body, belongsToCurrentUser) : null}
                     </Text>
+                    {mAttributes.type === "productCard" ? renderProductCard() : null}
                     {message.type === "media" ? renderMedia() : null}
                 </Box>
             </Box>
+            {mAttributes.type === "selectable" ? renderSelectableOptions() : null}
             {read && (
                 <Flex hAlignContent="right" vAlignContent="center" marginTop="space20">
                     <Text as="p" {...readStatusStyles}>

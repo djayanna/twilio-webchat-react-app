@@ -4,18 +4,22 @@ import { TextStyleProps } from "@twilio-paste/core/text";
 export const formStyles: BoxStyleProps = {
     padding: "space40",
     paddingTop: "space80",
-    overflow: "auto"
+    overflow: "auto",
+    height: "100%"
 };
 
 export const titleStyles: TextStyleProps = {
-    fontSize: "fontSize70",
-    marginBottom: "space60"
+    fontSize: "fontSize40",
+    marginBottom: "space60",
+    color: "colorTextIconOffline"
 };
 
 export const introStyles: TextStyleProps = {
-    marginBottom: "space70"
+    fontSize: "fontSize40",
+    marginBottom: "space70",
+    fontStyle: "textStyleItalic"
 };
 
-export const fieldStyles: BoxStyleProps = {
-    marginBottom: "space70"
+export const optionStyles: BoxStyleProps = {
+    backgroundColor: "colorBackgroundPrimaryWeakest"
 };

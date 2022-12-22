@@ -13,6 +13,13 @@ export const containerStyles: BoxStyleProps = {
     borderTopRightRadius: "borderRadius20"
 };
 
+export const closeStyles: BoxStyleProps = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "colorBackgroundPrimaryStronger"
+};
+
 export const titleStyles: TextStyleProps = {
     color: "colorTextWeakest",
     paddingLeft: "space30"
