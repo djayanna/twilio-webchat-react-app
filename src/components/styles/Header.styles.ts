@@ -13,6 +13,7 @@ export const containerStyles: BoxStyleProps = {
     borderTopRightRadius: "borderRadius20"
 };
 
+// eslint-disable-next-line import/no-unused-modules
 export const closeStyles: BoxStyleProps = {
     display: "flex",
     justifyContent: "space-between",
