@@ -74,3 +74,7 @@ export const productPriceStyles: TextStyleProps = {
 export const optionStyles : BoxStyleProps = {
     backgroundColor: "colorBackgroundPrimaryWeakest"
 };
+
+export const productCardStyles: BoxStyleProps = {
+    cursor: "pointer"
+};

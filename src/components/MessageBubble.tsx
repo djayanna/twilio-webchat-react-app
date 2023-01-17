@@ -23,7 +23,8 @@ import {
     bubbleAndAvatarContainerStyles,
     productNameStyles,
     productPriceStyles,
-    optionStyles
+    optionStyles,
+    productCardStyles
 } from "./styles/MessageBubble.styles";
 
 interface MessageWithAttributes {
@@ -148,6 +149,7 @@ export const MessageBubble = ({
                 onClick={() => {
                     window.location.href = attributes?.productUrl;
                 }}
+                {...productCardStyles}
             >
                 {/* <Anchor href={attributes?.productUrl}> */}
                 <img src={attributes?.imageUrl} alt="" width={164} height={164} />
