@@ -1,6 +1,6 @@
 # Twilio Webchat React App
 
-_Twilio Webchat React App_ is an application that demonstrates a website chat widget built for a Demo Retail Application. It uses Twilio's Conversations JS SDK, Twilio Paste Design library, the Flex WebChats endpoint, and the Create React App.
+_Twilio Webchat React App_ is an application that demonstrates a website chat widget customized and built for a Demo Retail Application. It uses Twilio's Conversations JS SDK, Twilio Paste Design library, the Twilio Functions, and the Create React App.
 
 ---
 
