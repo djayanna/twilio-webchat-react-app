@@ -105,6 +105,9 @@ See how to re-use Paste alert component to build custom notifications in our [Ho
 
 The pre-engagement form has be customized to start with a welcome message and a few options for the user to select. Alternatively, the user can start a chat by typing a message in the text box.
 
+
+<img src="./screenshot/webchat.png" width="250" />
+
 ## Chat Transcripts
 
 Twilio Webchat React App can provide customers with chat transcripts, if enabled. Chat transcripts can be provided to a customer through a direct download or email, at the end of a chat session. All files attached within the chat will be also be provided if a transcript is requested. This feature is disabled by default, but can be enabled by following the steps below.
