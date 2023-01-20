@@ -1,6 +1,6 @@
 # Twilio Webchat React App
 
-_Twilio Webchat React App_ is an application that demonstrates a website chat widget built for Flex Conversations. It uses Twilio's Conversations JS SDK, Twilio Paste Design library, the Flex WebChats endpoint, and the Create React App.
+_Twilio Webchat React App_ is an application that demonstrates a website chat widget built for a Demo Retail Application. It uses Twilio's Conversations JS SDK, Twilio Paste Design library, the Flex WebChats endpoint, and the Create React App.
 
 ---
 
@@ -10,7 +10,7 @@ _Twilio Webchat React App_ is an application that demonstrates a website chat wi
 2. [Features](#Features)
 3. [Project structure](#Project-structure)
     1. [React App](#1-react-app)
-    2. [Local backend server](#2-local-backend-server)
+    2. [Twilio Serverless](#2-local-backend-server)
 4. [Working in production](#working-in-production)
 5. [Browser support](#Browser-support)
 6. [Accessibility](#Accessibility)
@@ -56,10 +56,12 @@ The environment variables associated with enabling and configuring customer tran
 
 ## Working Locally
 
-### 1. Start the Local Backend Server
+### 1. Start a local development server
 
 ```shell
-yarn server
+cd serverless
+
+twilio serverless:start --port=3001
 ```
 
 Your server will be served at http://localhost:3001/.
@@ -101,8 +103,7 @@ See how to re-use Paste alert component to build custom notifications in our [Ho
 
 ## Pre-engagement Form
 
-Twilio Webchat React App comes out-of-the-box with a pre-engagement form. The data gathered on submission will be passed by default to the `initWebchat` endpoint of your server.
-More info [here](#a-note-about-the-pre-engagement-form-data).
+The pre-engagement form has be customized to start with a welcome message and a few options for the user to select. Alternatively, the user can start a chat by typing a message in the text box.
 
 ## Chat Transcripts
 
@@ -144,7 +145,7 @@ The email subject and HTML email content can be customised using the configurati
 Twilio Webchat React App is an open source repository that includes:
 
 1. A React App
-2. A local backend server
+2. Twilio Serverless 
 
 ## 1. React App
 
@@ -153,7 +154,7 @@ This App is built in React using Typescript, Twilio Paste and Twilio Conversatio
 You can find the source files in the `src` folder.
 
 After being initialized, the widget renders a button in the bottom right part of the page that, once clicked, will show a customisable form for your customers to compile.
-Once submitted, the App will hit the `initWebchat` endpoint of your server with the form data and get back a token with a conversationSid.
+Once submitted, the App will hit the `initWebchat` serverless function with pre-engagement data and get back a token with a conversationSid.
 At that point, your customer will be able to send messages to your agents.
 
 ### Configuration
@@ -174,6 +175,12 @@ window.addEventListener("DOMContentLoaded", () => {
                     // .. other Paste tokens
                 }
             }
+        },
+        // instead of passing hard coded values, pre-engagement data can be stored and read from local storage or redux store.
+        preEngagementData: {
+            name: "Nancy Jones", 
+            email: "test@test.com", 
+            query: ""
         },
         fileAttachment: {
             enabled: true,
@@ -197,7 +204,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 ```
 
-1. `serverUrl` represents the base server url that the app will hit to initialise the session or refresh the token.
+1. `serverUrl` represents the base url of serverless function that the app will hit to initialise the session or refresh the token.
 2. `theme` can be used to quickly customise the look and feel of the app.
     1. `theme.isLight` is a boolean to quickly toggle between the light and dark theme of Paste.
     2. `theme.overrides` is an object that you can fill with all the theme tokens you want to customise. Here's the full [list of tokens](https://paste.twilio.design/tokens/). **Note** remember to change the keys from `kebab-case` to `camelCase`.
@@ -209,14 +216,14 @@ window.addEventListener("DOMContentLoaded", () => {
     1. `transcript.emailSubject` configures what email customers receive in the email subject when they request an emailed transcript.
     2. `transcript.emailContent` configures what email customers receive in the email body when they request an emailed transcript.
 
-## 2. Local Backend Server
+## 2. Twilio Serverless
 
-As mentioned before, Twilio Webchat App requires a backend to hit in order to work correctly.
-This server — found in the `server` folder — exposes two main controllers.
+As mentioned before, Twilio Webchat App requires a backend to hit in order to work correctly. Here we use [Twilio Functions](https://www.twilio.com/docs/serverless) to host HTTP endpoints.
+Twilio Functions — found in the `serverless` folder contains three functions.
 
 ### 1. InitWebchat
 
-This first controller, hit by the application when the pre-engagement form is submitted, takes care of a few things:
+This first function is hit by the application when the pre-engagement form is submitted, takes care of a few things:
 
 1. Contacts Twilio Webchats endpoint to create a conversation and get a `conversationSid` and a participant `identity`
 2. Creates a token with the correct grants for the provided participant identity
@@ -230,25 +237,32 @@ In addition to that, all the fields (including `friendlyName`) will be saved as 
 
 ### 2. RefreshToken
 
-This second controller is in charge of refreshing a token that is about to expire. If the token is invalid or already expired, it will fail.
+This function is in charge of refreshing a token that is about to expire. If the token is invalid or already expired, it will fail.
+
+### 3. EndChat
+
+This function is in charge of closing/ending the conversation.
 
 # Working in Production
 
 In order to use this widget in production you will need to follow these three steps:
 
-1. Create remote server endpoints.
+1. Deploy Twilio Serverless.
 2. Upload compiled and minimised React App code.
 3. Update your website template.
 
-## 1. Create Remote Server Endpoints
+## 1. Deploy Twilio Serverless
 
-It is necessary to create two endpoints on a remote server or as serverless functions, for [initWebchat](#1-initwebchat) and [refreshToken](#2-refreshtoken) logic.
+
+```shell
+twilio serverless:deploy
+```
 
 ### Security Best Practises
 
 We highly recommend that you implement as many of the following security controls as possible, in order to have a more secure backend.
 
-1. **Create an allow-list on the server side.** It is necessary to verify on the server side that all the requests are sent from an allowed domain (by checking the origin header).
+1. **Create an allow-list** It is necessary to verify on the server side that all the requests are sent from an allowed domain (by checking the origin header).
 2. **Configure the Access-Control-Allow-Origin header** using the allow-list described above. This will prevent browsers from sending requests from malicious websites.
 3. **Create logs to detect and find anomalous behaviors.**
 4. **Block requests by IP, by geolocation/country and by URL**. Thanks to the logs created, it is possible to detect suspicious behaviours, depending on those behaviours it is possible to block requests for specific IP addresses, domains and even geolocations.
@@ -273,7 +287,7 @@ Once the bundle is uploaded, make sure to have it loaded in your website page, a
 ```
 
 Finally, add the code to initialize the webchat widget as per following example. It is crucial that you update the `serverUrl` with the base URL of your endpoints.
-The React App will then target `/initWebchat` and `/refreshToken` endpoints. If you want to use different endpoint urls, make sure to upload the code in `src/sessionDataHandler.ts`.
+The React App will then target `initWebchat` and `refreshToken` functions. If you want to use different endpoint/function, make sure to update the code in `src/sessionDataHandler.ts`.
 
 For more information about the available options, please check the [Configuration section](#configuration).
 
