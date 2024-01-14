@@ -13,6 +13,7 @@
     "@twilio-paste/theme": "^5.3.3",
     "@twilio/conversations": "2.1.0-rc.0",
     "@types/file-saver": "2.0.5",
+    "caniuse-lite": "^1.0.30001576",
     "file-saver": "2.0.5",
     "google-auth-library": "8.5.1",
     "googleapis": "107.0.0",
@@ -66,12 +67,14 @@
     "start": "react-app-rewired start",
     "server": "nodemon server",
     "server:ci": "node server",
-    "build": "react-app-rewired build",
+    "build": "react-app-rewired build && yarn transfer-build",
+    "transfer-build": "rm -rfv ./serverless/assets/ && mkdir ./serverless/assets/ && cp -R ./build/* ./serverless/assets/",
     "test": "LC_ALL=\"en_GB.UTF-8\" react-app-rewired test --env=jsdom --transformIgnorePatterns \"node_modules/(?!(@twilio-paste|@twilio/conversations))/\"",
     "test:nowatch": "yarn test --watchAll=false --verbose --runInBand",
     "bootstrap": "node scripts/bootstrap",
     "e2eCleanupExistingTasks": "node scripts/e2eCleanupExistingTasks",
     "deploy": "yarn build && node scripts/deploy",
+    "deploy-server": "cd serverless && yarn deploy",
     "eject": "react-app-rewired eject"
   },
   "browserslist": [

@@ -8,10 +8,21 @@ import { sessionDataHandler } from "./sessionDataHandler";
 import { initConfig } from "./store/actions/initActions";
 import { ConfigState } from "./store/definitions";
 import { initLogger } from "./logger";
-// import { updatePreEngagementData } from "./store/actions/genericActions";
+
+const getDomain = () => {
+    if (
+        window.location.hostname !== "localhost" &&
+        document.currentScript &&
+        (document.currentScript as HTMLScriptElement).src
+    ) {
+        const uri = new URL((document.currentScript as HTMLScriptElement).src);
+        return uri.origin;
+    }
+    return process.env.REACT_APP_LOCAL_SERVER_URL;
+};
 
 const defaultConfig: ConfigState = {
-    serverUrl: "http://localhost:3001",
+    serverUrl: getDomain(),
     theme: {
         isLight: true
     },
