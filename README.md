@@ -104,16 +104,16 @@ For an overview of the React app, please refer to the [_Twilio Webchat React_](h
 
 For an overview of all configuration options, please refer to the [_Twilio Webchat React_](https://github.com/twilio/twilio-webchat-react-app#configuration) README.
 
-This version has an additional optional configuration parameter, `sessionData`. If populated, properties within will be included in the `pre_engagement_data` of the conversation. This example adds two properties: `userId` and `entryPoint`.
-
 ```javascript
 window.addEventListener("DOMContentLoaded", () => {
-    Twilio.initWebchat({
-        sessionData: {
-            userId: "123",
-            entryPoint: "view-product-456"
-        }
-    });
+        Twilio.initWebchat({
+        serverUrl: "https://[serverless domain]",
+        theme: { isLight: !0 },
+        preEngagementData: {
+          name: `John Doe`,
+          email: `jdoe@email.com`
+         }
+        });
 });
 ```
 
