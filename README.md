@@ -1,7 +1,6 @@
 # Twilio Webchat React App
 
 _Twilio Webchat React App_ is an application that demonstrates a website chat widget customized and built for a Demo Retail Application. It uses Twilio's Conversations JS SDK, Twilio Paste Design library, the Twilio Functions, and the Create React App.
-
 ---
 
 1. [Getting started](#Getting-started)
@@ -22,17 +21,25 @@ _Twilio Webchat React App_ is an application that demonstrates a website chat wi
 
 ## Setup
 
-### 1. Install Dependencies
+### Install Dependencies
 
-Run the following command
+1. [Install the yarn package manager](https://classic.yarnpkg.com/lang/en/docs/install/), which is needed before performing the next steps.
 
-```shell
-yarn
-```
+1. **Install React App Dependencies** - run the following command at the root of the repository:
 
-### 2. Populate Your .env File
+    ```
+    yarn
+    ```
 
-We provide a handy `bootstrap` script to set up the environment variables required, but you can alternatively copy the `.env.sample` file.
+1. **Install Serverless Dependencies** - navigate to the `/serverless` directory:
+
+    ```
+    cd serverless && yarn
+    ```
+
+### Populate `.env` Files
+
+There are two `.env` to populate; one at the root of the repository and one in the `./serverless` directory. We provide a handy `bootstrap` script to set up the environment variables required for you.
 
 ```shell
 yarn bootstrap \
@@ -50,270 +57,180 @@ For more info on how to create an **API key** and an **API secret**, please chec
 
 You can find your **Conversations Service Sid** on the [services page](https://console.twilio.com/us1/develop/conversations/manage/services?frameUrl=%2Fconsole%2Fconversations%2Fservices%3Fx-target-region%3Dus1). Make sure to pick the one linked to your Flex Account — usually it is named `Flex Chat Service` and it starts with `IS`
 
-For the Address Sid, click on the edit button of your address and the edit screen will contain Address Sid. Note this Sid starts with `IG`.
+For the **Address Sid**, first ensure you have a valid chat address configured as described [here](https://www.twilio.com/docs/flex/admin-guide/setup/conversations/manage-conversations-chat-addresses). Click on the edit button of your chat address on the [messaging conversations addresses page](https://console.twilio.com/us1/develop/flex/manage/messaging/conversations) and the edit screen will contain Address Sid. Note this Sid starts with `IG`.
 
-The environment variables associated with enabling and configuring customer transcripts can be found in the `.env.sample` file and their use will be covered [here](#chat-transcripts).
+The environment variables associated with enabling and configuring customer transcripts can be found in the `.env.default` file, as well as the `.env` file after running the bootstrap script. Their use is covered [in the Twilio Webchat React readme](https://github.com/twilio/twilio-webchat-react-app/#chat-transcripts).
 
 ## Working Locally
 
-### 1. Start a local development server
+While developing locally, you will need to run the backend and frontend servers at the same time, which can both be started from the root directory with the following commands.
+
+### Start the Local Backend Server
+
+The following command will run the serverless functions locally:
 
 ```shell
-cd serverless
-
-twilio serverless:start --port=3001
+yarn server
 ```
 
-Your server will be served at http://localhost:3001/.
+Your functions will be served at `http://localhost:3003/`.
 
-### 2. Start the Local React App Server
+### Start the Local React App Server
+
+The following will run the React App locally:
 
 ```shell
 yarn start
 ```
 
-Your app will be served at http://localhost:3000/.
+Your app will be served at `http://localhost:3002/`.
 
 # Features
 
-## Core Messaging Features
-
-Twilio Webchat React App is built entirely with Twilio Conversations SDK and provides UI for most of its features:
-
--   Typing indicator
--   Read receipt
--   Attachments
--   Unread messages
-
-This app also makes use of the v2 WebChats endpoint which creates a Conversation, an anonymous user, and configures the conversation as per the Address Sid.
-
-## Ability to Resume Sessions
-
-Twilio Webchat React App will persist user session, if the user closes and reopens the tab. The customer will achieve it by potentially storing the JWT token in their user's local storage. This JWT token will expire after an amount of time.
-
-## Connectivity Notification
-
-Twilio Webchat React App monitors user internet connectivity and will inform them with a notification if their connection has been lost.
-Once the connection has been re-established,
-the user again will be informed and the list of messages will be updated with any missed messages during the connectivity loss.
-
-This feature is built using [Conversations SDK ConnectionState](http://media.twiliocdn.com/sdk/js/conversations/releases/2.0.0/docs/modules.html#ConnectionState) events and [Twilio Paste alert component](https://paste.twilio.design/components/alert).
-
-See how to re-use Paste alert component to build custom notifications in our [How to guides](https://docs.google.com/document/d/1RWuvvZZWdV3AbuZNIC_IFyOxJaKFagdk3k-FT2VMyEM/edit#heading=h.467mbzcgq98p).
-
-## Pre-engagement Form
-
-The pre-engagement form has be customized to start with a welcome message and a few options for the user to select. Alternatively, the user can start a chat by typing a message in the text box.
-
-
-<img src="./screenshot/webchat.png" width="250" />
-
-## Chat Transcripts
-
-Twilio Webchat React App can provide customers with chat transcripts, if enabled. Chat transcripts can be provided to a customer through a direct download or email, at the end of a chat session. All files attached within the chat will be also be provided if a transcript is requested. This feature is disabled by default, but can be enabled by following the steps below.
-
-### Downloading Transcripts
-
-Customers can download chat transcripts as a plain text file. If attachments are present within the chat conversation, a zip file containing the plain text transcript file and the attached files will be downloaded.
-
-**Setup**
-
-Allowing customers to download transcripts requires no additional setup beyond adding the below entry to the `.env` file.
-
-```
-DOWNLOAD_TRANSCRIPT_ENABLED=true
-```
-
-### Emailing Transcripts
-
-Customers can email chat transcripts to the email address provided in the pre-engagement form. The transcript will be provided within the body of the email and any associated files will be added as attachments to the email. Emails will be sent using the [SendGrid](https://sendgrid.com/) API.
-
-**Setup**
-
-1. Add the following entry to the `.env` file.
-    ```
-    EMAIL_TRANSCRIPT_ENABLED=true
-    ```
-2. Create a [SendGrid](https://sendgrid.com/) account with a verified domain or email. This will be used to send the email transcripts to customers.
-3. Add the SendGrid API key and verified email to the `.env` file as the values for `SENDGRID_API_KEY` and `FROM_EMAIL` respectively.
-
-The email subject and content can be customised in the configuration object, as described [here](#configuration).
-
-**Customisation**
-
-The email subject and HTML email content can be customised using the configuration object, as described [here](#configuration).
+For a feature overview of the application, please refer to the [_Twilio Webchat React_](https://github.com/twilio/twilio-webchat-react-app) README.
 
 # Project Structure
 
-Twilio Webchat React App is an open source repository that includes:
+This repository includes two packages:
 
-1. A React App
-2. Twilio Serverless 
+1. A React app
+2. Serverless functions for securely invoking the Twilio Webchat APIs
 
-## 1. React App
+## React App
 
-The **React app** is a newer version of the legacy [webchat widget](https://www.twilio.com/docs/flex/developer/messaging/webchat/setup). With this new app, you can clone and customize it to meet your needs.
-This App is built in React using Typescript, Twilio Paste and Twilio Conversations SDK.
-You can find the source files in the `src` folder.
-
-After being initialized, the widget renders a button in the bottom right part of the page that, once clicked, will show a customisable form for your customers to compile.
-Once submitted, the App will hit the `initWebchat` serverless function with pre-engagement data and get back a token with a conversationSid.
-At that point, your customer will be able to send messages to your agents.
+For an overview of the React app, please refer to the [_Twilio Webchat React_](https://github.com/twilio/twilio-webchat-react-app) README.
 
 ### Configuration
 
-This React app is open-sourced, so you can freely customise every aspect of it to suit your needs. However, to speed up some aspects of the customisations, we are exposing a configuration object on the init function.
+For an overview of all configuration options, please refer to the [_Twilio Webchat React_](https://github.com/twilio/twilio-webchat-react-app#configuration) README.
 
-Here's an example of how to use this config object in your `index.html` template.
+This version has an additional optional configuration parameter, `sessionData`. If populated, properties within will be included in the `pre_engagement_data` of the conversation. This example adds two properties: `userId` and `entryPoint`.
 
 ```javascript
 window.addEventListener("DOMContentLoaded", () => {
     Twilio.initWebchat({
-        serverUrl: "%YOUR_SERVER_URL%",
-        theme: {
-            isLight: true,
-            overrides: {
-                backgroundColors: {
-                    colorBackgroundBody: "#faebd7"
-                    // .. other Paste tokens
-                }
-            }
-        },
-        // instead of passing hard coded values, pre-engagement data can be stored and read from local storage or redux store.
-        preEngagementData: {
-            name: "Nancy Jones", 
-            email: "test@test.com", 
-            query: ""
-        },
-        fileAttachment: {
-            enabled: true,
-            maxFileSize: 16777216, // 16 MB
-            acceptedExtensions: ["jpg", "jpeg", "png", "amr", "mp3", "mp4", "pdf"]
-        },
-        transcript: {
-            emailSubject: (agentNames) => {
-                let subject = "Transcript of your chat";
-                if (agentNames.length > 0) {
-                    subject = subject.concat(` with ${agentNames[0]}`);
-                    agentNames.slice(1).forEach((name) => (subject = subject.concat(` and ${name}`)));
-                }
-                return subject;
-            },
-            emailContent: (customerName, transcript) => {
-                return `<div><h1 style="text-align:center;">Chat Transcript</h1><p>Hello ${customerName},<br><br>Please see below your transcript, with any associated files attached, as requested.<br><br>${transcript}</p></div>`;
-            }
+        sessionData: {
+            userId: "123",
+            entryPoint: "view-product-456"
         }
     });
 });
 ```
 
-1. `serverUrl` represents the base url of serverless function that the app will hit to initialise the session or refresh the token.
-2. `theme` can be used to quickly customise the look and feel of the app.
-    1. `theme.isLight` is a boolean to quickly toggle between the light and dark theme of Paste.
-    2. `theme.overrides` is an object that you can fill with all the theme tokens you want to customise. Here's the full [list of tokens](https://paste.twilio.design/tokens/). **Note** remember to change the keys from `kebab-case` to `camelCase`.
-3. `fileAttachment` allows you to enable and configure what files your customers can send to your agents.
-    1. `fileAttachment.enabled` describes whether customers can send agents any file at all.
-    2. `fileAttachment.maxSize` describes the max file size that customers can send (in bytes).
-    3. `fileAttachment.acceptedExtensions` is an array describing the file types that customers can send.
-4. `transcript` allows you to enable and configure what chat transcripts your customers can received.
-    1. `transcript.emailSubject` configures what email customers receive in the email subject when they request an emailed transcript.
-    2. `transcript.emailContent` configures what email customers receive in the email body when they request an emailed transcript.
+## Serverless functions
 
-## 2. Twilio Serverless
+As mentioned before, Twilio Webchat App requires a backend to hit in order to work correctly.
+This backend functionality — found in the `serverless` folder — exposes two main endpoints:
 
-As mentioned before, Twilio Webchat App requires a backend to hit in order to work correctly. Here we use [Twilio Functions](https://www.twilio.com/docs/serverless) to host HTTP endpoints.
-Twilio Functions — found in the `serverless` folder contains three functions.
+### InitWebchat
 
-### 1. InitWebchat
-
-This first function is hit by the application when the pre-engagement form is submitted, takes care of a few things:
+This first endpoints, hit by the application when the pre-engagement form is submitted, takes care of a few things:
 
 1. Contacts Twilio Webchats endpoint to create a conversation and get a `conversationSid` and a participant `identity`
 2. Creates a token with the correct grants for the provided participant identity
 3. (optional) Programmatically send a message in behalf of the user with their query and then a welcome message
 
-#### A note about the pre-engagement form data
 
-By default, this endpoint takes the `friendlyName` field of the form and uses it to set the customer User's name via the webchat orchestration endpoint.
+### RefreshToken
 
-In addition to that, all the fields (including `friendlyName`) will be saved as the conversation `attributes`, under the `pre_engagement_data` key. You can find additional information on the Conversation object [here](https://www.twilio.com/docs/conversations/api/conversation-resource#conversation-properties).
+This second endpoint is in charge of refreshing a token that is about to expire. If the token is invalid or already expired, it will fail.
 
-### 2. RefreshToken
+# Deployment Steps
 
-This function is in charge of refreshing a token that is about to expire. If the token is invalid or already expired, it will fail.
+In order to use a deployed version of this widget you will need to follow these three steps:
 
-### 3. EndChat
+1. Build and compile minimized React App code.
+2. Build and deploy the serverless function endpoints
+3. (Optional) Update your website template.
 
-This function is in charge of closing/ending the conversation.
+The first two steps can be performed automatically via the included GitHub Actions workflow. This workflow requires configuring the following repository secrets, using the values from the Getting Started section above:
 
-# Working in Production
+-   TWILIO_API_KEY
+-   TWILIO_API_SECRET
+-   ADDRESS_SID
+-   CONVERSATIONS_SERVICE_SID
 
-In order to use this widget in production you will need to follow these three steps:
+You may also follow the steps below to manually deploy.
 
-1. Deploy Twilio Serverless.
-2. Upload compiled and minimised React App code.
-3. Update your website template.
+## Build and compile minimized React App code
 
-## 1. Deploy Twilio Serverless
-
-
-```shell
-twilio serverless:deploy
-```
-
-### Security Best Practises
-
-We highly recommend that you implement as many of the following security controls as possible, in order to have a more secure backend.
-
-1. **Create an allow-list** It is necessary to verify on the server side that all the requests are sent from an allowed domain (by checking the origin header).
-2. **Configure the Access-Control-Allow-Origin header** using the allow-list described above. This will prevent browsers from sending requests from malicious websites.
-3. **Create logs to detect and find anomalous behaviors.**
-4. **Block requests by IP, by geolocation/country and by URL**. Thanks to the logs created, it is possible to detect suspicious behaviours, depending on those behaviours it is possible to block requests for specific IP addresses, domains and even geolocations.
-5. **Include a fingerprint in the token.** Generate a fingerprint to try to identify the client and include it in the token. When the token is sent, the fingerprint is generated again and compared with the token's fingerprint.
-
-## 2. Upload Compiled and Minimised React App Code
-
-To create a bundle file for the whole Webchat React App.
+The first step is to compile a build of the Webchat React App, which will eventually be hosted via Twilio Assets. This is important to do first, as the app needs to be compiled and copied to the serverless `assets` directory in order to be deployed. The following command will build the React app and place the minimized build in the `assets` folder of our Twilio Serverless function:
 
 ```shell
 yarn build
 ```
 
-Make sure to upload and host this file on your server, or on a host service, that is accessible from your website's domain.
+## Build and deploy the serverless function endpoints
 
-## 3. Update Your Website Template
+The next step is to build and deploy the serverless functions and assets.
 
-Once the bundle is uploaded, make sure to have it loaded in your website page, as per example below:
+Since Typescript was used in development, the `.ts` files are compiled to `.js` files and copied to a `dist/` folder which are then used for deployment.
+
+1. To build the serverless functions, run the following from the root directory:
+
+    ```
+    yarn build-server
+    ```
+
+2. Next, deploy the functions with the following:
+    ```
+    yarn deploy-server
+    ```
+
+After successful deployment, copy the `domain` of the deployed functions, which will be needed in the next step.
+
+## Update Your Website Template (optional)
+
+Once the bundle is uploaded, you can have it loaded in your website page, as per one of the two examples below:
+
+### Embedded JavaScript (recommended)
+
+First, add the following script tag, replacing `[serverless domain]` with the same domain output from the deployment steps above:
 
 ```html
-<script src="https://[...]webchat.js"></script>
+<script defer src="https://[serverless domain]/static/js/main.js"></script>
 ```
 
-Finally, add the code to initialize the webchat widget as per following example. It is crucial that you update the `serverUrl` with the base URL of your endpoints.
-The React App will then target `initWebchat` and `refreshToken` functions. If you want to use different endpoint/function, make sure to update the code in `src/sessionDataHandler.ts`.
+Next, declare the root element that the webchat widget will be rendered into:
+
+```html
+<div id="twilio-webchat-widget-root"></div>
+```
+
+Finally, add the code to initialize the webchat app as per following example.
 
 For more information about the available options, please check the [Configuration section](#configuration).
 
 ```html
 <script>
-    window.addEventListener("DOMContentLoaded", () => {
+     window.addEventListener("DOMContentLoaded", () => {
         Twilio.initWebchat({
-            serverUrl: "%SERVER_URL%" // IMPORTANT, UPDATE THIS!!
+        serverUrl: "https://[serverless domain]",
+        theme: { isLight: !0 },
+        preEngagementData: {
+          name: `John Doe`,
+          email: `jdoe@email.com`
+         }
         });
     });
 </script>
 ```
 
+### Embedded iframe
+
+Add the following, replacing `[serverless domain]` with the same domain output from the deployment steps above:
+
+```html
+<iframe src="https://[serverless domain]/index.html"></iframe>
+```
+
 # Browser Support
 
-Twilio Webchat React App is built entirely on two main libraries Twilio Paste Design System and Twilio Conversations SDK, and it supports the same set up browsers.
-For more information please refer to [Twilio Conversations SDK browser support](http://media.twiliocdn.com/sdk/js/conversations/releases/2.0.1/docs/#changelog) and [Twilio Paste browser support FAQ](https://paste.twilio.design/getting-started/faqs/#engineering)
+For Browser Support, please refer to the [_Twilio Webchat React_](https://github.com/twilio/twilio-webchat-react-app) README.
 
 # Accessibility
 
-Twilio Webchat React App is built using [Twilio Paste Design System](https://paste.twilio.design/) and follows accessibility standards.
-Using Webchat app as a foundation for your website chat widget will make it easier to stay WCAG compliant with your website.
-Find out more about [Twilio UX principles](https://paste.twilio.design/principles) and [inclusive design guidelines](https://paste.twilio.design/inclusive-design).
+For Accessibility, please refer to the [_Twilio Webchat React_](https://github.com/twilio/twilio-webchat-react-app) README..
 
 # FAQs
 
