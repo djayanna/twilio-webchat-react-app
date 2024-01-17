@@ -160,19 +160,11 @@ The first step is to compile a build of the Webchat React App, which will eventu
 yarn build
 ```
 
-## Build and deploy the serverless function endpoints
+## Deploy the serverless function endpoints
 
-The next step is to build and deploy the serverless functions and assets.
+The next step is to deploy the serverless functions and assets.
 
-Since Typescript was used in development, the `.ts` files are compiled to `.js` files and copied to a `dist/` folder which are then used for deployment.
-
-1. To build the serverless functions, run the following from the root directory:
-
-    ```
-    yarn build-server
-    ```
-
-2. Next, deploy the functions with the following:
+1. Deploy the functions with the following:
     ```
     yarn deploy-server
     ```
