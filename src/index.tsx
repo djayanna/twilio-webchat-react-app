@@ -16,6 +16,7 @@ const getDomain = () => {
         (document.currentScript as HTMLScriptElement).src
     ) {
         const uri = new URL((document.currentScript as HTMLScriptElement).src);
+        console.log("getDomain", uri.origin);
         return uri.origin;
     }
     return process.env.REACT_APP_LOCAL_SERVER_URL;
@@ -48,8 +49,9 @@ const defaultConfig: ConfigState = {
     }
 };
 
-const initWebchat = async (config: ConfigState) => {
+const _initWebchat = async (config: ConfigState) => {
     const mergedConfig = merge({}, defaultConfig, config);
+    console.log("serverUrl", mergedConfig.serverUrl);
     sessionDataHandler.setEndpoint(mergedConfig.serverUrl);
 
     store.dispatch(initConfig(mergedConfig));
@@ -66,6 +68,21 @@ const initWebchat = async (config: ConfigState) => {
     if (window.Cypress) {
         window.store = store;
     }
+};
+
+const initWebchat = async (webId: string) => {
+    const config: ConfigState = {
+        serverUrl: "https://webchat-6252-dev.twil.io",
+        theme: { isLight: !0 },
+        preEngagementData: {
+            name: `John Doe`,
+            email: `jdoe@email.com`,
+            query: "Hi There! ",
+            webid: webId
+        }
+    };
+
+    _initWebchat(config);
 };
 
 declare global {

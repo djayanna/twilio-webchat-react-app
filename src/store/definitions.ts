@@ -20,7 +20,7 @@ export type ChatState = {
     conversationState?: string;
 };
 
-export type PreEngagementData = { name: string; email: string; query: string };
+export type PreEngagementData = { name: string; email: string; query: string; webid: string };
 
 export type SessionState = {
     currentPhase: EngagementPhase;
