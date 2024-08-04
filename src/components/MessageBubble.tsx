@@ -39,8 +39,18 @@ interface ProductCardAttributes extends MessageWithAttributes {
     productUrl: string;
 }
 
+interface CustomAttributes extends MessageWithAttributes {
+    imageUrl: string;
+}
+
+type Option = {
+    type: string;
+    text: string;
+    payload: string;
+};
+
 interface SelectableOptionsAttributes extends MessageWithAttributes {
-    options: string[];
+    options: Option[];
 }
 
 const doubleDigit = (number: number) => `${number < 10 ? 0 : ""}${number}`;
@@ -110,29 +120,32 @@ export const MessageBubble = ({
         return <i>Media messages are not supported</i>;
     };
 
+
+
     const renderSelectableOptions = () => {
         const attributes = message.attributes as SelectableOptionsAttributes;
+
         if (!attributes?.options) {
             return null;
         }
 
-        return attributes?.options.map((option: string, index: Key) => {
+        return attributes?.options.map((option: Option) => {
             return (
-                <Box key={index}>
+                <Box key={option.text}>
                     <p />
-                    <Box key={index} marginLeft="space100" height="70" {...optionStyles}>
+                    <Box key={option.text} marginLeft="space100" height="70" {...optionStyles}>
                         <Button
-                            key={index}
+                            key={option.text}
                             data-test="message-send-button"
                             variant="primary_icon"
                             size="icon_small"
                             onClick={async () => {
                                 let preparedMessage = conversation?.prepareMessage();
-                                preparedMessage = preparedMessage?.setBody(option);
+                                preparedMessage = preparedMessage?.setBody(option.text);
                                 await preparedMessage?.build().send();
                             }}
                         >
-                            {option}
+                            {option.text}
                         </Button>
                     </Box>
                 </Box>
@@ -164,6 +177,17 @@ export const MessageBubble = ({
         );
     };
 
+    const renderCustom = () => {
+        const attributes = message.attributes as CustomAttributes;
+        return (
+            <Box alignContent="center">
+                {/* <Anchor href={attributes?.productUrl}> */}
+                <img src={attributes?.imageUrl} alt="" width={164} height={164} />
+                {/* </Anchor> */}
+            </Box>
+        );
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
             const newFocusValue = message.index + (e.key === "ArrowUp" ? -1 : 1);
@@ -190,6 +214,7 @@ export const MessageBubble = ({
     const author = users?.find((u) => u.identity === message.author)?.friendlyName || message.author;
 
     const mAttributes = message.attributes as MessageWithAttributes;
+
     return (
         <Box
             {...outerContainerStyles}
@@ -231,7 +256,8 @@ export const MessageBubble = ({
                     {message.type === "media" ? renderMedia() : null}
                 </Box>
             </Box>
-            {mAttributes.type === "selectable" ? renderSelectableOptions() : null}
+            {mAttributes.type === "button" ? renderSelectableOptions() : null}
+            {mAttributes.type === "custom" ? renderCustom() : null}
             {read && (
                 <Flex hAlignContent="right" vAlignContent="center" marginTop="space20">
                     <Text as="p" {...readStatusStyles}>

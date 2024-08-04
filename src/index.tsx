@@ -10,16 +10,8 @@ import { ConfigState } from "./store/definitions";
 import { initLogger } from "./logger";
 
 const getDomain = () => {
-    if (
-        window.location.hostname !== "localhost" &&
-        document.currentScript &&
-        (document.currentScript as HTMLScriptElement).src
-    ) {
-        const uri = new URL((document.currentScript as HTMLScriptElement).src);
-        console.log("getDomain", uri.origin);
-        return uri.origin;
-    }
-    return process.env.REACT_APP_LOCAL_SERVER_URL;
+    console.log(process.env.REACT_APP_SERVER_URL);
+    return process.env.REACT_APP_SERVER_URL;
 };
 
 const defaultConfig: ConfigState = {
@@ -72,12 +64,10 @@ const _initWebchat = async (config: ConfigState) => {
 
 const initWebchat = async (webId: string) => {
     const config: ConfigState = {
-        serverUrl: "https://webchat-6252-dev.twil.io",
+        //: "https://webchat-6252-dev.twil.io",
         theme: { isLight: !0 },
         preEngagementData: {
-            name: `John Doe`,
-            email: `jdoe@email.com`,
-            query: "Hi There! ",
+            name: `Anonymous`,
             webid: webId
         }
     };

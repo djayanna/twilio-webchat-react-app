@@ -16,7 +16,7 @@ import { AppState, EngagementPhase } from "../store/definitions";
 import { Header } from "./Header";
 import { notifications } from "../notifications";
 import { NotificationBar } from "./NotificationBar";
-import { introStyles, titleStyles, formStyles, optionStyles } from "./styles/PreEngagementFormPhase.styles";
+import { introStyles, titleStyles, formStyles } from "./styles/PreEngagementFormPhase.styles";
 import { innerInputStyles, messageOptionContainerStyles, textAreaContainerStyles } from "./styles/MessageInput.styles";
 import { CHAR_LIMIT } from "../constants";
 
@@ -60,10 +60,6 @@ export const PreEngagementFormPhase = () => {
         }
     };
 
-    const handleClick = async (message: string) => {
-        await initiateChatSessionAndSendMessage(message);
-    };
-
     const onChange = (val: ChangeEvent<HTMLTextAreaElement>) => {
         setText(val.target.value);
     };
@@ -78,14 +74,14 @@ export const PreEngagementFormPhase = () => {
                 </Flex>
                 <Flex hAlignContent="center" width="100%">
                     <Text {...titleStyles} textAlign="center" as="p">
-                        Welcome to Owl Shoes!
+                        Welcome to Owl Bank!
                     </Text>
                 </Flex>
                 <Text {...introStyles} as="p">
                     Hi there! What can I help you with today?
                 </Text>
                 <p />
-                <Box marginLeft="space100" height="80" {...optionStyles}>
+                {/* <Box marginLeft="space100" height="80" {...optionStyles}>
                     <Button
                         data-test="pre-engagement-chat-order-tracking-button"
                         variant="primary_icon"
@@ -122,7 +118,7 @@ export const PreEngagementFormPhase = () => {
                     >
                         Sizing advice
                     </Button>
-                </Box>
+                </Box> */}
                 <Box as="div" height="220px" />
                 <Flex vAlignContent="bottom">
                     <InputBox element="MESSAGE_INPUT_BOX">
