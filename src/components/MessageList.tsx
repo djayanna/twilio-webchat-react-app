@@ -165,7 +165,7 @@ export const MessageList = () => {
             <>
                 <Box {...conversationEventContainerStyles}>
                     <Text as="p" {...conversationEventTitleStyles} data-test="chat-started">
-                        Welcome to Owl Shoes!
+                        Welcome to Owl Bank!
                     </Text>
                     <Text as="p" {...conversationEventDateStyles}>
                         {conversation?.dateCreated.getDate() === new Date().getDate()?"Today": conversation?.dateCreated.toLocaleString()}
